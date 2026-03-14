@@ -1,35 +1,28 @@
-import express from "express";
-import cors from "cors";
-import OpenAI from "openai";
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+// Home route
+app.get("/", (req, res) => {
+  res.send("Elymas AI Server is Running 🚀");
 });
 
-app.post("/chat", async (req, res) => {
-  try {
+// Chat route
+app.post("/chat", (req, res) => {
+  const userMessage = req.body.message;
 
-    const userMessage = req.body.message;
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "You are Elymas, a helpful assistant for Kyeremeh Abass website." },
-        { role: "user", content: userMessage }
-      ]
-    });
-
-    res.json({ reply: response.choices[0].message.content });
-
-  } catch (error) {
-    res.json({ reply: "Sorry, something went wrong." });
-  }
+  res.json({
+    reply: "You said: " + userMessage
+  });
 });
 
-app.listen(3000, () => {
-  console.log("Elymas AI running");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
